@@ -7,7 +7,7 @@ ini_set('max_execution_time', 2000);
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
-function getEditCounts( $category, $days = 3, $limit = 5 ) {
+function getEditCounts( $source, $days = 3, $limit = 5, $method = 'category' ) {
 	$pages = array();
 	// Retrieve the ID and timestamp of the first revision within the requested time period.
 	$result = mysql_query("select s.rev_id,s.rev_timestamp from revision as s where s.rev_timestamp> DATE_FORMAT(DATE_SUB(NOW(),INTERVAL " . $days . " DAY),'%Y%m%d%H%i%s') order by s.rev_timestamp asc limit 1;");
@@ -17,7 +17,11 @@ function getEditCounts( $category, $days = 3, $limit = 5 ) {
 	}
 	// Retrieve the pages with the most revisions since the threshold revision.
 	if ( $revId && $revTimestamp ) {
-		$subquery = "select a.page_id,a.page_title from categorylinks join page as t on t.page_id=cl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where cl_to='".$category."' and a.page_latest>".$revId;
+		if ( $method === 'template' ) {
+			$subquery = "select a.page_id,a.page_title from templatelinks join page as t on t.page_id=tl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where tl_title='".$source."' and a.page_latest>".$revId;
+		} else {
+			$subquery = "select a.page_id,a.page_title from categorylinks join page as t on t.page_id=cl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where cl_to='".$source."' and a.page_latest>".$revId;
+		}
 		$result = mysql_query("select main.page_title as title,count(main.rev_minor_edit) as ctall, sum(main.rev_minor_edit) from (select tt.page_title,rev_minor_edit,rev_user_text from revision join (".$subquery.") as tt on rev_page=tt.page_id where rev_timestamp>".$revTimestamp.") as main group by main.page_title order by ctall desc limit ".$limit.";");
 		while ($row = mysql_fetch_array($result)) {
 			$title = str_replace( '_', ' ', $row['title'] );
@@ -50,11 +54,14 @@ while ($row = mysql_fetch_array ($result)) {
 		$category = str_replace(' ', '_', $row['source']);
 		$count = $wikipedia->categorypagecount('Category:'.$category);
 		if ($count < $maxArticles) {
-			$editCounts = getEditCounts( $category, $row['span_days'], $row['article_number'] );
+			$editCounts = getEditCounts( $category, $row['span_days'], $row['article_number'], $row['method'] );
 		} else {
 			echo "Category ".$row['source']." is too large. Skipping.\n";
 			continue;
 		}
+	} else if ($row['method'] == 'template') {
+		$template = str_replace(' ', '_', $row['source']);
+		$editCounts = getEditCounts( $template, $row['span_days'], $row['article_number'], $row['method'] );
 	} else {
 		echo "Invalid method for ".$row['source'].". Skipping.\n";
 		continue;
