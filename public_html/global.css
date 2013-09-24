@@ -1,0 +1,116 @@
+body { 
+	background-color:#2a2a2a;
+	margin:0;
+	background-image:url('images/background.gif');
+	background-repeat:repeat-y;
+	background-position: top center;
+	color:#000;
+	font:12px/16px verdana,arial,helvetica,clean,sans-serif;
+}
+
+div#body_holder {
+	width:922px;
+	margin: 0px auto;
+	padding: 15px 19px;
+	background-color:#f7f8f9;
+	background-image:url('images/main_bg.gif');
+	background-repeat:repeat-x;
+	background-position: top center;
+	position:relative;
+	min-height:300px;
+}
+
+div.header {
+	position: relative;
+	padding: 0px 0px 5px 0px;
+	text-align: center;
+}
+
+table {
+	font-size: inherit;
+	line-height: inherit;
+}
+table.list {
+	line-height: 15px;
+	border:1px solid #AAAAAA;
+	border-collapse:collapse;
+}
+table.list th {
+	background-color:#e2e2e2;
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+div.list_item {
+	clear: both;
+	padding: 1em 0;
+	border-top: 1px dotted #aaaaaa;
+}
+div.list_item img.thumbnail {
+	display: block;
+	margin-right: 0.5em;
+}
+div.list_item span.detail {
+	font-size: 75%;
+	color: #666666;
+}
+
+select, input, textarea {font:99% arial,helvetica,clean,sans-serif;}
+input {white-space: nowrap;}
+pre, code {font:115% monospace;}
+
+a { color:#5f8fcf; }
+a:hover { color:#4e0a0a; }
+a img { border:0; }
+form { margin:0;padding:0; }
+
+h1 { font:30px georgia,times,serif; border-bottom:1px dotted #aaaaaa; }
+h2 { font-size:16px; font-weight:bold; margin-top:10px; }
+
+.error {color:#FF3333; font-weight:bold;}
+.success {color:#339900; font-weight:bold;}
+
+#footer {
+	padding: 2em 0 1em 0;
+	margin: 0px;
+	clear: both;
+	font: 10px/16px verdana, helvetica, sans-serif;
+	color: #888888;
+}
+
+#footer a { color: #333333; }
+
+/*---------- bubble tooltip -----------*/
+a.tt {
+	position:relative;
+	z-index:24;
+	color:#0077BB;
+	text-decoration:none;
+}
+a.tt span { display: none; }
+/*background:; ie hack, something must be changed in a for ie to execute it*/
+a.tt:hover { z-index:25; background:; }
+a.tt:hover span.tooltip {
+	display:block;
+	position:absolute;
+	top:0px; left:0;
+	padding: 10px 0 0 0;
+	width: 200px;
+	color: #993300;
+	text-align: center;
+}
+a.tt:hover span.top {
+	display: block;
+	padding: 30px 8px 0;
+	background: url('images/bubble.gif') no-repeat top;
+}
+a.tt:hover span.middle { /* different middle bg for stretch */
+	display: block;
+	padding: 0 8px; 
+	background: url('images/bubble_filler.gif') repeat bottom; 
+}
+a.tt:hover span.bottom {
+	display: block;
+	padding:3px 8px 10px;
+	background: url('images/bubble.gif') no-repeat bottom;
+}
