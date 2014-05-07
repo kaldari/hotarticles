@@ -7,7 +7,7 @@ ini_set('max_execution_time', 2000);
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
-function getEditCounts( $source, $days = 3, $limit = 5, $method = 'category' ) {
+function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'category' ) {
 	$pages = array();
 	// Retrieve the ID and timestamp of the first revision within the requested time period.
 	$result = mysqli_query($link, "select s.rev_id,s.rev_timestamp from revision as s where s.rev_timestamp> DATE_FORMAT(DATE_SUB(NOW(),INTERVAL " . $days . " DAY),'%Y%m%d%H%i%s') order by s.rev_timestamp asc limit 1;");
@@ -52,14 +52,14 @@ while ($row = mysqli_fetch_array ($result)) {
 		$category = str_replace(' ', '_', $row['source']);
 		$count = $wikipedia->categorypagecount('Category:'.$category);
 		if ($count < $maxArticles) {
-			$editCounts = getEditCounts( $category, $row['span_days'], $row['article_number'], $row['method'] );
+			$editCounts = getEditCounts( $link, $category, $row['span_days'], $row['article_number'], $row['method'] );
 		} else {
 			echo "Category ".$row['source']." is too large. Skipping.\n";
 			continue;
 		}
 	} else if ($row['method'] == 'template') {
 		$template = str_replace(' ', '_', $row['source']);
-		$editCounts = getEditCounts( $template, $row['span_days'], $row['article_number'], $row['method'] );
+		$editCounts = getEditCounts( $link, $template, $row['span_days'], $row['article_number'], $row['method'] );
 	} else {
 		echo "Invalid method for ".$row['source'].". Skipping.\n";
 		continue;
