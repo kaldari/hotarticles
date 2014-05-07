@@ -12,9 +12,9 @@ print("<h2>Hot Article Subscriptions</h2>");
 print("<p>Click on the name of a subscription to configure it.</p>");
 
 $query = "SELECT * FROM hotarticles";
-$result = mysql_query($query) or die(mysql_error());
+$result = mysqli_query($link, $query) or die(mysqli_error());
 
-while ($row = mysql_fetch_array ($result)) {
+while ($row = mysqli_fetch_array ($result)) {
 	print('<a href="editsubscription.php?id='.$row['id'].'">'.$row['source'].'</a><br/>');
 }
 print('<br/>');
