@@ -1,10 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
 /* Setup the mediawiki classes. */
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
-$link = mysql_connect ($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass']);
-mysql_select_db($hotarticlesdb['dbname'], $link);
+$link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname']);
 
 $wikipedia = new wikipedia();
 
@@ -12,7 +13,7 @@ $wikipedia = new wikipedia();
 $wikipedia->login($enwiki['user'],$enwiki['pass']);
 
 $error = '';
-if ($_POST['source']) {
+if (isset($_POST['source'])) {
 	$_POST['source'] = str_replace("_", " ", $_POST['source']);
 	$count = $wikipedia->categorypagecount('Category:'.$_POST['source']);
 	if ($count > $maxArticles) {
@@ -25,9 +26,9 @@ if ($_POST['source']) {
 		$_POST['orange'] = addslashes($_POST['orange']);
 		$_POST['red'] = addslashes($_POST['red']);
 		$query = "UPDATE hotarticles SET method = 'category', source = '$_POST[source]', article_number = '$_POST[article_number]', span_days = '$_POST[span_days]', target_page = '$_POST[target_page]', orange = '$_POST[orange]', red = '$_POST[red]' WHERE id = $_POST[id] LIMIT 1";
-		$result = mysql_query($query);
+		$result = mysqli_query($link, $query);
 		if (!$result) {
-			$error = "Database error: ".mysql_error();
+			$error = "Database error: ".mysqli_error();
 		} else {
 			Header("Location:configure.php");
 		}
@@ -36,9 +37,9 @@ if ($_POST['source']) {
 
 include ("header.inc.php");
 
-$query = "SELECT * FROM hotarticles where id = '$_GET[id]' LIMIT 1";
-$subscriptionResult = mysql_query($query);
-$row = mysql_fetch_array ($subscriptionResult);
+$query = "SELECT * FROM hotarticles where id = " . $_GET[id] . " LIMIT 1";
+$subscriptionResult = mysqli_query($link, $query);
+$row = mysqli_fetch_array ($subscriptionResult);
 
 print("<h2>Edit a Hot Article Subscription</h2>");
 print("<p><i>Note: Currently subscriptions are limited to categories with ".$maxArticles." or fewer pages.</i></p>");

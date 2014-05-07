@@ -67,6 +67,7 @@ while ($row = mysql_fetch_array ($result)) {
 		continue;
 	}
 
+	echo $row['source']."\r\n";
 	$output = "{|\r";
 	$validUpdate = false;
 	$output = "{|\r";
@@ -108,5 +109,3 @@ WIKITEXT;
 	}
 }
 echo "$date: Bot run";
-?>
-

@@ -1,10 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
 /* Setup the mediawiki classes. */
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
-$link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass']);
-mysqli_select_db($hotarticlesdb['dbname'], $link);
+$link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname']);
 
 $wikipedia = new wikipedia();
 
@@ -12,7 +13,7 @@ $wikipedia = new wikipedia();
 $wikipedia->login($enwiki['user'],$enwiki['pass']);
 
 $error = '';
-if ($_POST['source']) {
+if (isset($_POST['source'])) {
 	$_POST['source'] = str_replace("_", " ", $_POST['source']);
 	$count = $wikipedia->categorypagecount('Category:'.$_POST['source']);
 	if ($count > $maxArticles) {
@@ -177,4 +178,3 @@ if ($error) {
 
 <?php
 include ("footer.inc.php");
-?>

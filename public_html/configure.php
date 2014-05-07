@@ -6,8 +6,7 @@ ini_set("display_errors", 1);
 require_once dirname(__FILE__) . '/../config.inc.php';
 include ("header.inc.php");
 
-$link = mysql_connect ($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass']);
-mysql_select_db($hotarticlesdb['dbname'], $link);
+$link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname']);
 
 print("<h2>Hot Article Subscriptions</h2>");
 print("<p>Click on the name of a subscription to configure it.</p>");
@@ -22,4 +21,3 @@ print('<br/>');
 print('[ <a href="addsubscription.php">Add a subscription</a> ]<br/>');
 print('<br/>');
 include ("footer.inc.php");
-?>
