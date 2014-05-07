@@ -3,8 +3,8 @@
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
-$link = mysql_connect ($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass']);
-mysql_select_db($hotarticlesdb['dbname'], $link);
+$link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass']);
+mysqli_select_db($hotarticlesdb['dbname'], $link);
 
 $wikipedia = new wikipedia();
 
@@ -20,8 +20,8 @@ if ($_POST['source']) {
 	} else {
 		$_POST['source'] = trim(addslashes($_POST['source']));
 		$query = "SELECT * FROM hotarticles where source = '$_POST[source]' LIMIT 1";
-		$sourceresult = mysql_query($query);
-		if (@mysql_num_rows($sourceresult) == 1) {
+		$sourceresult = mysqli_query($link, $query);
+		if (@mysqli_num_rows($sourceresult) == 1) {
 			$error = "Error: Category is already subscribed. Please enter a new one.";
 		} else {
 			$_POST['target_page'] = trim(addslashes($_POST['target_page']));
@@ -30,9 +30,9 @@ if ($_POST['source']) {
 			$_POST['orange'] = addslashes($_POST['orange']);
 			$_POST['red'] = addslashes($_POST['red']);
 			$query = "INSERT INTO hotarticles (method, source, article_number, span_days, target_page, orange, red) VALUES ('category', '$_POST[source]', '$_POST[article_number]', '$_POST[span_days]', '$_POST[target_page]', '$_POST[orange]', '$_POST[red]')";
-			$result = mysql_query($query);
+			$result = mysqli_query($link, $query);
 			if (!$result) {
-				$error = "Database error: ".mysql_error();
+				$error = "Database error: ".mysqli_error();
 			} else {
 				Header("Location:configure.php");
 			}
