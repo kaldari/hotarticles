@@ -85,15 +85,14 @@ while ($row = mysqli_fetch_array ($result)) {
 					break;
 			}
 			$output .= <<<WIKITEXT
-|-
 | style="text-align:center; font-size:130%; color:white; background:$color; padding: 0 0.2em" | '''$value'''&nbsp;<span style="font-size:60%">edits</span>
 | style="padding: 0.4em;" | [[$key]]
+|-
 WIKITEXT;
 			$output .= "\r";
 		}
 	}
 	$output .= <<<WIKITEXT
-|-
 | style="padding: 0.1em;" |
 |}
 WIKITEXT;
