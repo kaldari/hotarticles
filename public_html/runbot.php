@@ -65,10 +65,10 @@ while ($row = mysqli_fetch_array ($result)) {
 		continue;
 	}
 
-	echo $row['source']."\r\n";
-	$output = "{|\r";
+	echo $row['source']."\n";
+	$output = "{|\n";
 	$validUpdate = false;
-	$output = "{|\r";
+	$output = "{|\n";
 	$validUpdate = false;
 	foreach ( $editCounts as $key => $value ) {
 		if ( $value != '' && $key != '' ) {
@@ -89,7 +89,7 @@ while ($row = mysqli_fetch_array ($result)) {
 | style="text-align:center; font-size:130%; color:white; background:$color; padding: 0 0.2em" | '''$value'''&nbsp;<span style="font-size:60%">edits</span>
 | style="padding: 0.4em;" | [[$key]]
 WIKITEXT;
-			$output .= "\r";
+			$output .= "\n";
 		}
 	}
 	$output .= <<<WIKITEXT
@@ -99,7 +99,7 @@ WIKITEXT;
 WIKITEXT;
 	$wordarray = array('zero','one','two','three','four','five','six','seven','eight','nine','ten');
 	$date = date('j F Y', time());
-	$output .= "\rThese are the articles that have been edited the most within the last ".$wordarray[$row['span_days']]." days. Last updated $date.\r";
+	$output .= "\nThese are the articles that have been edited the most within the last ".$wordarray[$row['span_days']]." days. Last updated $date.\n";
 
 	if ( $validUpdate ) {
 		$edit = $wikipedia->edit($row['target_page'],$output,'Updating for '.date('F j, Y'));
