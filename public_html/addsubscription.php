@@ -17,7 +17,7 @@ if (isset($_POST['source'])) {
 	$_POST['source'] = str_replace("_", " ", $_POST['source']);
 	$count = $wikipedia->categorypagecount('Category:'.$_POST['source']);
 	if ($count > $maxArticles) {
-		$error = "Error: Category ".$row['source']." is too large.<br/>";
+		$error = "Error: Category ".$_POST['source']." is too large.<br/>";
 	} else {
 		$_POST['source'] = trim(addslashes($_POST['source']));
 		$query = "SELECT * FROM hotarticles where source = '$_POST[source]' LIMIT 1";
