@@ -45,6 +45,7 @@ $wikipedia->login( $enwiki['user'], $enwiki['pass'] );
 $link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname']);
 
 if ( isset( $argv[1] ) && !is_nan( $argv[1] ) ) {
+	$argv[1] = mysqli_real_escape_string( $argv[1] );
 	$query = "SELECT * FROM hotarticles WHERE id = $argv[1]";
 } else {
 	$query = "SELECT * FROM hotarticles";
