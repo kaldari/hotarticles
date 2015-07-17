@@ -15,23 +15,25 @@ require_once dirname(__FILE__) . '/../botclasses.php';
 
 function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'category' ) {
 	$pages = array();
-	// Retrieve the ID and timestamp of the first revision within the requested time period.
-	$result = mysqli_query($link, "select s.rev_id,s.rev_timestamp from revision as s where s.rev_timestamp> DATE_FORMAT(DATE_SUB(NOW(),INTERVAL " . $days . " DAY),'%Y%m%d%H%i%s') order by s.rev_timestamp asc limit 1;");
-	while ( $row = mysqli_fetch_array( $result ) ) {
-		$revId = $row['rev_id'];
-		$revTimestamp = $row['rev_timestamp'];
-	}
-	// Retrieve the pages with the most revisions since the threshold revision.
-	if ( $revId && $revTimestamp ) {
-		if ( $method === 'template' ) {
-			$subquery = "select a.page_id,a.page_title from templatelinks join page as t on t.page_id=tl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where tl_title='".$source."' and a.page_latest>".$revId;
-		} else {
-			$subquery = "select a.page_id,a.page_title from categorylinks join page as t on t.page_id=cl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where cl_to='".$source."' and a.page_latest>".$revId;
-		}
-		$result = mysqli_query($link, "select main.page_title as title,count(main.rc_minor) as ctall, sum(main.rc_minor) from (select tt.page_title,rc_minor,rc_user_text from recentchanges join (".$subquery.") as tt on rc_cur_id=tt.page_id where rc_timestamp>".$revTimestamp.") as main group by main.page_title order by ctall desc limit ".$limit.";");
+	if ( $days <= 30 ) {
+		// Retrieve the ID and timestamp of the first revision within the requested time period.
+		$result = mysqli_query($link, "select s.rev_id,s.rev_timestamp from revision as s where s.rev_timestamp> DATE_FORMAT(DATE_SUB(NOW(),INTERVAL " . $days . " DAY),'%Y%m%d%H%i%s') order by s.rev_timestamp asc limit 1;");
 		while ( $row = mysqli_fetch_array( $result ) ) {
-			$title = str_replace( '_', ' ', $row['title'] );
-			$pages[$title] = $row['ctall'];
+			$revId = $row['rev_id'];
+			$revTimestamp = $row['rev_timestamp'];
+		}
+		// Retrieve the pages with the most revisions since the threshold revision.
+		if ( $revId && $revTimestamp ) {
+			if ( $method === 'template' ) {
+				$subquery = "select a.page_id,a.page_title from templatelinks join page as t on t.page_id=tl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where tl_title='".$source."' and a.page_latest>".$revId;
+			} else {
+				$subquery = "select a.page_id,a.page_title from categorylinks join page as t on t.page_id=cl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where cl_to='".$source."' and a.page_latest>".$revId;
+			}
+			$result = mysqli_query($link, "select main.page_title as title,count(main.rc_minor) as ctall, sum(main.rc_minor) from (select tt.page_title,rc_minor,rc_user_text from recentchanges join (".$subquery.") as tt on rc_cur_id=tt.page_id where rc_timestamp>".$revTimestamp.") as main group by main.page_title order by ctall desc limit ".$limit.";");
+			while ( $row = mysqli_fetch_array( $result ) ) {
+				$title = str_replace( '_', ' ', $row['title'] );
+				$pages[$title] = $row['ctall'];
+			}
 		}
 	}
 	return $pages;
