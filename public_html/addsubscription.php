@@ -30,13 +30,18 @@ if (isset($_POST['source'])) {
 			$_POST['span_days'] = mysqli_real_escape_string($_POST['span_days']);
 			$_POST['orange'] = mysqli_real_escape_string($_POST['orange']);
 			$_POST['red'] = mysqli_real_escape_string($_POST['red']);
-			$query = "INSERT INTO hotarticles (method, source, article_number, span_days, target_page, orange, red) VALUES ('category', '$_POST[source]', '$_POST[article_number]', '$_POST[span_days]', '$_POST[target_page]', '$_POST[orange]', '$_POST[red]')";
-			$result = mysqli_query($link, $query);
-			if (!$result) {
-				$error = "Database error: ".mysqli_error();
+			if ( $_POST['span_days'] <= 30 && $_POST['article_number'] <= 100 ) {
+				$query = "INSERT INTO hotarticles (method, source, article_number, span_days, target_page, orange, red) VALUES ('category', '$_POST[source]', '$_POST[article_number]', '$_POST[span_days]', '$_POST[target_page]', '$_POST[orange]', '$_POST[red]')";
+				$result = mysqli_query($link, $query);
+				if (!$result) {
+					$error = "Database error: ".mysqli_error();
+				} else {
+					Header("Location:configure.php");
+				}
 			} else {
-				Header("Location:configure.php");
+				$error = "Form input not valid. Please try again.";
 			}
+			
 		}
 	}
 }
