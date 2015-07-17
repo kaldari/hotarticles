@@ -124,7 +124,7 @@ if ($error) {
 				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
 				<span class="tooltip">
 					<span class="top"></span>
-					<span class="middle">Where should the list be written to? For example, "Wikipedia:WikiProject_Foobar/Hot_articles"</span>
+					<span class="middle">Where should the list be written to? For example, "Wikipedia:Foobar/Hot_articles"</span>
 					<span class="bottom"></span>
 				</span>
 				</a>
