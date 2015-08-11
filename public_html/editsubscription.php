@@ -25,7 +25,7 @@ if (isset($_POST['source'])) {
 		$_POST['span_days'] = mysqli_real_escape_string($link, $_POST['span_days']);
 		$_POST['orange'] = mysqli_real_escape_string($link, $_POST['orange']);
 		$_POST['red'] = mysqli_real_escape_string($link, $_POST['red']);
-		if ( $_POST['span_days'] <= 30 && $_POST['article_number'] <= 100 ) {
+		if ( $_POST['span_days'] <= 30 && $_POST['span_days'] > 0 && $_POST['article_number'] <= 100 ) {
 			$query = "UPDATE hotarticles SET method = 'category', source = '$_POST[source]', article_number = '$_POST[article_number]', span_days = '$_POST[span_days]', target_page = '$_POST[target_page]', orange = '$_POST[orange]', red = '$_POST[red]' WHERE id = $_POST[id] LIMIT 1";
 			$result = mysqli_query($link, $query);
 			if (!$result) {

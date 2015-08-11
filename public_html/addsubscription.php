@@ -30,7 +30,7 @@ if (isset($_POST['source'])) {
 			$_POST['span_days'] = mysqli_real_escape_string($link, $_POST['span_days']);
 			$_POST['orange'] = mysqli_real_escape_string($link, $_POST['orange']);
 			$_POST['red'] = mysqli_real_escape_string($link, $_POST['red']);
-			if ( $_POST['span_days'] <= 30 && $_POST['article_number'] <= 100 ) {
+			if ( $_POST['span_days'] <= 30 && $_POST['span_days'] > 0 && $_POST['article_number'] <= 100 ) {
 				$query = "INSERT INTO hotarticles (method, source, article_number, span_days, target_page, orange, red) VALUES ('category', '$_POST[source]', '$_POST[article_number]', '$_POST[span_days]', '$_POST[target_page]', '$_POST[orange]', '$_POST[red]')";
 				$result = mysqli_query($link, $query);
 				if (!$result) {
