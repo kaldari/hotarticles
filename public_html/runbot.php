@@ -1,15 +1,15 @@
 <?php
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-ini_set('max_execution_time', 2000);
+error_reporting( E_ALL );
+ini_set( 'display_errors', 1 );
+ini_set( 'max_execution_time', 600 );
 
-/* Exit if not run from command-line. */
+/* Exit if not run from command-line */
 if  ( php_sapi_name() !== 'cli' ) {
 	echo "This script should be run from the command-line.";
 	die();
 }
 
-/* Setup the mediawiki classes. */
+/* Setup the mediawiki classes */
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
@@ -41,10 +41,10 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 
 $wikipedia = new wikipedia();
 
-/* Log in to wikipedia. */
+// Log in to wikipedia
 $wikipedia->login( $enwiki['user'], $enwiki['pass'] );
 
-$link = mysqli_connect($hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname']);
+$link = mysqli_connect( $hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname'] );
 
 if ( isset( $argv[1] ) && !is_nan( $argv[1] ) ) {
 	$argv[1] = mysqli_real_escape_string( $link, $argv[1] );
@@ -56,18 +56,21 @@ $result = mysqli_query($link, $query) or die(mysqli_error());
 
 $link = mysqli_connect($enwikidb['host'], $enwikidb['user'], $enwikidb['pass'], $enwikidb['dbname']);
 
-while ($row = mysqli_fetch_array ($result)) {
-	if ($row['method'] == 'category') {
-		$category = str_replace(' ', '_', $row['source']);
-		$count = $wikipedia->categorypagecount('Category:'.$category);
-		if ($count < $maxArticles) {
+// Fetch all the subscriptions and generate a chart for each
+while ( $row = mysqli_fetch_array( $result ) ) {
+	// Allow up to 5 minutes for each chart to be generated. This resets max_execution_time.
+	set_time_limit( 300 );
+	if ( $row['method'] == 'category' ) {
+		$category = str_replace( ' ', '_', $row['source'] );
+		$count = $wikipedia->categorypagecount( 'Category:'.$category );
+		if ( $count < $maxArticles ) {
 			$editCounts = getEditCounts( $link, $category, $row['span_days'], $row['article_number'], $row['method'] );
 		} else {
 			echo "Category ".$row['source']." is too large. Skipping.\n";
 			continue;
 		}
 	} else if ($row['method'] == 'template') {
-		$template = str_replace(' ', '_', $row['source']);
+		$template = str_replace( ' ', '_', $row['source'] );
 		$editCounts = getEditCounts( $link, $template, $row['span_days'], $row['article_number'], $row['method'] );
 	} else {
 		echo "Invalid method for ".$row['source'].". Skipping.\n";
@@ -112,7 +115,6 @@ WIKITEXT;
 
 	if ( $validUpdate ) {
 		$edit = $wikipedia->edit($row['target_page'],$output,'Updating for '.date('F j, Y'));
-		//if ($edit) echo "Completed update for ".$row['source'].".\n";
 	}
 }
 echo "$date: Bot run";
