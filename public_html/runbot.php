@@ -117,7 +117,7 @@ WIKITEXT;
 		$edit = $wikipedia->edit($row['target_page'],$output,'Updating for '.date('F j, Y'));
 	}
 	$time_end = microtime(true);
-	$execution_time = $time_end - $time_start;
+	$execution_time = round( $time_end - $time_start, 2 );
 	echo $row['source'] . " (" . $execution_time . " seconds)\n";
 }
 echo "$date: Bot run";
