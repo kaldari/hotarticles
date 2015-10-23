@@ -120,4 +120,4 @@ WIKITEXT;
 	$execution_time = round( $time_end - $time_start, 2 );
 	echo $row['source'] . " (" . $execution_time . " seconds)\n";
 }
-echo "$date: Bot run";
+echo "$date: Bot run\n";
