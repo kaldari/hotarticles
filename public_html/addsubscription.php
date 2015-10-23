@@ -160,7 +160,7 @@ if ($error) {
 			<td><input name="target_page" value="<?php echo stripslashes($_POST['target_page']); ?>" type="text" size="40" maxlength="255"/></td>
 		</tr>
 		<tr>
-			<td>Orange threshold:
+			<td>Orange Threshold:
 				<a class="tt" href="#">
 				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
 				<span class="tooltip">
@@ -182,7 +182,7 @@ if ($error) {
 			</td>
 		</tr>
 		<tr>
-			<td>Red threshold:
+			<td>Red Threshold:
 				<a class="tt" href="#">
 				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
 				<span class="tooltip">
