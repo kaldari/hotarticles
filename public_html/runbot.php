@@ -3,13 +3,13 @@ error_reporting( E_ALL );
 ini_set( 'display_errors', 1 );
 ini_set( 'max_execution_time', 600 );
 
-/* Exit if not run from command-line */
+// Exit if not run from command-line
 if  ( php_sapi_name() !== 'cli' ) {
 	echo "This script should be run from the command-line.";
 	die();
 }
 
-/* Setup the mediawiki classes */
+// Set up configuration and wikipedia class
 require_once dirname(__FILE__) . '/../config.inc.php';
 require_once dirname(__FILE__) . '/../botclasses.php';
 
@@ -58,6 +58,7 @@ $link = mysqli_connect($enwikidb['host'], $enwikidb['user'], $enwikidb['pass'], 
 
 // Fetch all the subscriptions and generate a chart for each
 while ( $row = mysqli_fetch_array( $result ) ) {
+	$time_start = microtime(true);
 	// Allow up to 5 minutes for each chart to be generated. This resets max_execution_time.
 	set_time_limit( 300 );
 	if ( $row['method'] == 'category' ) {
@@ -77,7 +78,6 @@ while ( $row = mysqli_fetch_array( $result ) ) {
 		continue;
 	}
 
-	echo $row['source']."\n";
 	$output = "{|\n";
 	$validUpdate = false;
 	$output = "{|\n";
@@ -116,5 +116,8 @@ WIKITEXT;
 	if ( $validUpdate ) {
 		$edit = $wikipedia->edit($row['target_page'],$output,'Updating for '.date('F j, Y'));
 	}
+	$time_end = microtime(true);
+	$execution_time = $time_end - $time_start;
+	echo $row['source'] . " (" . $execution_time . " seconds)\n";
 }
 echo "$date: Bot run";
