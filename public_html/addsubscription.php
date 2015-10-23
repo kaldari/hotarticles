@@ -17,32 +17,25 @@ $wikipedia->login($enwiki['user'],$enwiki['pass']);
 
 // Process form submission if needed
 $error = '';
-if ( isset( $_POST['source'] ) && isset( $_POST['method'] ) ) {
-	$continue = true;
+if ( isset( $_POST['source'] ) ) {
 	$_POST['source'] = str_replace( '_', ' ', $_POST['source'] );
 
-	if ( $_POST['method'] === 'category' ) {
-		$count = $wikipedia->categorypagecount( 'Category:' . $_POST['source'] );
-		if ( $count > $maxArticles ) {
-			$error = "Error: Category " . $_POST['source'] . " is too large.<br/>";
-			$continue = false;
-		}
-	}
-	// TODO: Check number of template transclusions if method is template
-
-	if ( $continue ) {
+	$count = $wikipedia->categorypagecount( 'Category:' . $_POST['source'] );
+	if ( $count > $maxArticles ) {
+		$error = "Error: Category " . $_POST['source'] . " is too large.<br/>";
+	} else {
 		// Clean up posted values
 		foreach($_POST as $key => $value) {
-			$_POST[$key] = trim( mysqli_real_escape_string( $link, $value ));
+			$_POST[$key] = trim( mysqli_real_escape_string( $link, $value ) );
 		}
 
 		$query = "SELECT * FROM hotarticles where source = '$_POST[source]' LIMIT 1";
 		$sourceresult = mysqli_query( $link, $query );
 		if ( @mysqli_num_rows( $sourceresult ) === 1 ) {
-			$error = "Error: Category or template is already subscribed. Please enter a new one.";
+			$error = "Error: Category is already subscribed. Please enter a new one.";
 		} else {
 			if ( $_POST['span_days'] <= 30 && $_POST['span_days'] > 0 && $_POST['article_number'] <= 100 ) {
-				$query = "INSERT INTO hotarticles (method, source, article_number, span_days, target_page, orange, red) VALUES ('$_POST[method]', '$_POST[source]', '$_POST[article_number]', '$_POST[span_days]', '$_POST[target_page]', '$_POST[orange]', '$_POST[red]')";
+				$query = "INSERT INTO hotarticles (method, source, article_number, span_days, target_page, orange, red) VALUES ('category', '$_POST[source]', '$_POST[article_number]', '$_POST[span_days]', '$_POST[target_page]', '$_POST[orange]', '$_POST[red]')";
 				$result = mysqli_query( $link, $query );
 				if ( !$result ) {
 					$error = 'Database error: ' . mysqli_error();
@@ -67,25 +60,7 @@ if ($error) {
 <form name="form1" method="post">
 	<table cellspacing="2" cellpadding="2" border="0">
 		<tr>
-			<td>Aggregation Method:
-				<a class="tt" href="#">
-				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
-				<span class="tooltip">
-					<span class="top"></span>
-					<span class="middle">Whether to use articles from a particular category or that include a particular template</span>
-					<span class="bottom"></span>
-				</span>
-				</a>
-			</td>
-			<td>
-				<select name="method">
-					<option value="category"<?php if (!$_POST['method'] || $_POST['method'] == "category") echo " selected=\"selected\""; ?>>category</option>
-					<option value="template"<?php if ($_POST['method'] == "template") echo " selected=\"selected\""; ?>>template</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>Category/Template Name:
+			<td>Category Name:
 				<a class="tt" href="#">
 				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
 				<span class="tooltip">

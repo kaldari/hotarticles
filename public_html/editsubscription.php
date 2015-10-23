@@ -17,27 +17,20 @@ $wikipedia->login($enwiki['user'],$enwiki['pass']);
 
 // Process form submission if needed
 $error = '';
-if ( isset( $_POST['source'] ) && isset( $_POST['method'] ) ) {
-	$continue = true;
+if ( isset( $_POST['source'] ) ) {
 	$_POST['source'] = str_replace( '_', ' ', $_POST['source'] );
 
-	if ( $_POST['method'] === 'category' ) {
-		$count = $wikipedia->categorypagecount( 'Category:' . $_POST['source'] );
-		if ( $count > $maxArticles ) {
-			$error = "Error: Category " . $_POST['source'] . " is too large.<br/>";
-			$continue = false;
-		}
-	}
-	// TODO: Check number of template transclusions if method is template
-
-	if ( $continue ) {
+	$count = $wikipedia->categorypagecount( 'Category:' . $_POST['source'] );
+	if ( $count > $maxArticles ) {
+		$error = "Error: Category " . $_POST['source'] . " is too large.<br/>";
+	} else {
 		// Clean up posted values
 		foreach($_POST as $key => $value) {
-			$_POST[$key] = trim( mysqli_real_escape_string( $link, $value ));
+			$_POST[$key] = trim( mysqli_real_escape_string( $link, $value ) );
 		}
 
 		if ( $_POST['span_days'] <= 30 && $_POST['span_days'] > 0 && $_POST['article_number'] <= 100 ) {
-			$query = "UPDATE hotarticles SET method = '$_POST[method]', source = '$_POST[source]', article_number = '$_POST[article_number]', span_days = '$_POST[span_days]', target_page = '$_POST[target_page]', orange = '$_POST[orange]', red = '$_POST[red]' WHERE id = $_POST[id] LIMIT 1";
+			$query = "UPDATE hotarticles SET method = 'category', source = '$_POST[source]', article_number = '$_POST[article_number]', span_days = '$_POST[span_days]', target_page = '$_POST[target_page]', orange = '$_POST[orange]', red = '$_POST[red]' WHERE id = $_POST[id] LIMIT 1";
 			$result = mysqli_query( $link, $query );
 			if ( !$result ) {
 				$error = 'Database error: ' . mysqli_error();
@@ -65,25 +58,7 @@ if ($error) {
 <form name="form1" method="post">
 	<table cellspacing="2" cellpadding="2" border="0">
 		<tr>
-			<td>Aggregation Method:
-				<a class="tt" href="#">
-				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
-				<span class="tooltip">
-					<span class="top"></span>
-					<span class="middle">Whether to use articles from a particular category or that include a particular template</span>
-					<span class="bottom"></span>
-				</span>
-				</a>
-			</td>
-			<td>
-				<select name="method">
-					<option value="category"<?php if (!$row['method'] || $row['method'] == "category") echo " selected=\"selected\""; ?>>category</option>
-					<option value="template"<?php if ($row['method'] == "template") echo " selected=\"selected\""; ?>>template</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<td>Category/Template Name:
+			<td>Category Name:
 				<a class="tt" href="#">
 				<img height="12" width="12" border="0" src="images/help_icon.gif"/>
 				<span class="tooltip">
