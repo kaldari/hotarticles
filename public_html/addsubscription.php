@@ -153,6 +153,8 @@ if ($error) {
 					<option value="20"<?php if ($_POST['orange'] == "20") echo " selected=\"selected\""; ?>>20</option>
 					<option value="25"<?php if ($_POST['orange'] == "25") echo " selected=\"selected\""; ?>>25</option>
 					<option value="30"<?php if ($_POST['orange'] == "30") echo " selected=\"selected\""; ?>>30</option>
+					<option value="40"<?php if ($_POST['orange'] == "40") echo " selected=\"selected\""; ?>>40</option>
+					<option value="50"<?php if ($_POST['orange'] == "50") echo " selected=\"selected\""; ?>>50</option>
 				</select>
 			</td>
 		</tr>
@@ -177,6 +179,8 @@ if ($error) {
 					<option value="40"<?php if ($_POST['red'] == "40") echo " selected=\"selected\""; ?>>40</option>
 					<option value="50"<?php if ($_POST['red'] == "50") echo " selected=\"selected\""; ?>>50</option>
 					<option value="60"<?php if ($_POST['red'] == "60") echo " selected=\"selected\""; ?>>60</option>
+					<option value="80"<?php if ($_POST['red'] == "80") echo " selected=\"selected\""; ?>>80</option>
+					<option value="100"<?php if ($_POST['red'] == "100") echo " selected=\"selected\""; ?>>100</option>
 				</select>
 			</td>
 		</tr></table>
