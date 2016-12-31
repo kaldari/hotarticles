@@ -29,7 +29,7 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 			} else {
 				$subquery = "select a.page_id,a.page_title from categorylinks join page as t on t.page_id=cl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where cl_to='".$source."' and a.page_latest>".$revId;
 			}
-			$result = mysqli_query($link, "select main.page_title as title,count(main.rc_minor) as ctall, sum(main.rc_minor) from (select tt.page_title,rc_minor,rc_user_text from recentchanges join (".$subquery.") as tt on rc_cur_id=tt.page_id where rc_timestamp>".$revTimestamp.") as main group by main.page_title order by ctall desc limit ".$limit.";");
+			$result = mysqli_query($link, "select main.page_title as title,count(main.rc_minor) as ctall, sum(main.rc_minor) from (select tt.page_title,rc_minor,rc_user_text from recentchanges join (".$subquery.") as tt on rc_cur_id=tt.page_id where rc_timestamp>".$revTimestamp." and rc_type<2) as main group by main.page_title order by ctall desc limit ".$limit.";");
 			while ( $row = mysqli_fetch_array( $result ) ) {
 				$title = str_replace( '_', ' ', $row['title'] );
 				$pages[$title] = $row['ctall'];
