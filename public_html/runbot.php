@@ -111,7 +111,7 @@ WIKITEXT;
 WIKITEXT;
 	$wordarray = array('zero','one','two','three','four','five','six','seven','eight','nine','ten');
 	$date = date('j F Y', time());
-	$output .= "\nThese are the articles that have been edited the most within the last ".$wordarray[$row['span_days']]." days. Last updated $date by [[User:HotArticlesBot|HotArticlesBot]].\n";
+	$output .= "\n<small>These are the articles that have been edited the most within the last ".$wordarray[$row['span_days']]." days. Last updated $date by [[User:HotArticlesBot|HotArticlesBot]].</small>\n";
 
 	if ( $validUpdate ) {
 		$edit = $wikipedia->edit($row['target_page'],$output,'Updating for '.date('F j, Y'));
