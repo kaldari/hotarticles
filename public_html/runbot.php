@@ -98,7 +98,7 @@ while ( $row = mysqli_fetch_array( $result ) ) {
 			}
 			$output .= <<<WIKITEXT
 |-
-| style="text-align:center; font-size:130%; color:white; background:$color; padding: 0 0.2em" | '''$value'''&nbsp;<span style="font-size:60%">edits</span>
+| style="text-align:center; font-size:130%; color:white; background:$color; padding:0 0.2em; vertical-align:middle;" | '''$value'''&nbsp;<span style="font-size:60%">edits</span>
 | style="padding: 0.4em;" | [[$key]]
 WIKITEXT;
 			$output .= "\n";
