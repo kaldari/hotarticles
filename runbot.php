@@ -10,8 +10,8 @@ if  ( php_sapi_name() !== 'cli' ) {
 }
 
 // Set up configuration and wikipedia class
-require_once dirname(__FILE__) . '/../config.inc.php';
-require_once dirname(__FILE__) . '/../botclasses.php';
+require_once dirname(__FILE__) . '/config.inc.php';
+require_once dirname(__FILE__) . '/botclasses.php';
 
 function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'category' ) {
 	$pages = array();
