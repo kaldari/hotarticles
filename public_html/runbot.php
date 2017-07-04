@@ -42,15 +42,16 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 /**
  * Fetch all the subscription data for the bot
  *
- * @param string $configPage The title of the on-wiki config page (optional)
+ * @param object $wikipedia The interface object for Wikipedia
  * @param string $project The name of a specific WikiProject (e.g. "WikiProject
  *     Spiders"). If no project is specified, config data for all the projects
  *     will be returned.
  *
  * @throws Exception
  */
-function getSubscriptions( $configPage = 'User:HotArticlesBot/Config.json', $project = null ) {
-	$page = $this->wikipedia->getpage( $configPage );
+function getSubscriptions( $wikipedia, $project = null ) {
+	$configPage = 'User:HotArticlesBot/Config.json';
+	$page = $wikipedia->getpage( $configPage );
 	if ( $page ) {
 		$res = json_decode( $page, true );
 		$config = [];
@@ -72,7 +73,7 @@ function getSubscriptions( $configPage = 'User:HotArticlesBot/Config.json', $pro
 				'red' => $values['Red']
 			];
 		}
-		$this->subscriptions = $config;
+		return $config;
 	} else {
 		throw new Exception( 'Could not retrieve config page.' );
 	}
@@ -84,9 +85,9 @@ $wikipedia = new wikipedia();
 $wikipedia->login( $enwiki['user'], $enwiki['pass'] );
 
 if ( isset( $argv[1] ) ) {
-	$subscriptions = getSubscriptions( $argv[1] );
+	$subscriptions = getSubscriptions( $wikipedia, $argv[1] );
 } else {
-	$subscriptions = getSubscriptions();
+	$subscriptions = getSubscriptions( $wikipedia );
 }
 
 $link = mysqli_connect($enwikidb['host'], $enwikidb['user'], $enwikidb['pass'], $enwikidb['dbname']);
