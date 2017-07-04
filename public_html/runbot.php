@@ -79,6 +79,21 @@ function getSubscriptions( $wikipedia, $project = null ) {
 	}
 }
 
+function isSubscriptionSane( $subscription ) {
+	if ( strpos( $subscription['page'], 'Wikipedia:' ) === 0 &&
+		$subscription['articles'] >= 5 &&
+		$subscription['articles'] <= 10 &&
+		$subscription['days'] >= 1 &&
+		$subscription['days'] <= 7 &&
+		$subscription['orange'] > 0 &&
+		$subscription['red'] > 0
+	) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 $wikipedia = new wikipedia();
 
 // Log in to wikipedia
@@ -93,7 +108,11 @@ if ( isset( $argv[1] ) ) {
 $link = mysqli_connect($enwikidb['host'], $enwikidb['user'], $enwikidb['pass'], $enwikidb['dbname']);
 
 // Fetch all the subscriptions and generate a chart for each
-foreach ( $subscriptions as $row ) {
+foreach ( $subscriptions as $key => $row ) {
+	if ( !isSubscriptionSane( $row ) ) {
+		echo "Subscription for ".$key." is malformed. Skipping.\n";
+		continue;
+	}
 	$time_start = microtime(true);
 
 	// Allow up to 5 minutes for each chart to be generated. This resets max_execution_time.
