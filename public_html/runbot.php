@@ -39,42 +39,71 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 	return $pages;
 }
 
+/**
+ * Fetch all the subscription data for the bot
+ *
+ * @param string $configPage The title of the on-wiki config page (optional)
+ * @param string $project The name of a specific WikiProject (e.g. "WikiProject
+ *     Spiders"). If no project is specified, config data for all the projects
+ *     will be returned.
+ *
+ * @throws Exception
+ */
+function getSubscriptions( $configPage = 'User:HotArticlesBot/Config.json', $project = null ) {
+	$page = $this->wikipedia->getpage( $configPage );
+	if ( $page ) {
+		$res = json_decode( $page, true );
+		$config = [];
+		foreach ( $res as $key => $values ) {
+			// Skip the description of the config page format
+			if ( $key === 'description' ) {
+				continue;
+			}
+			// If a specific project was requested, skip other projects
+			if ( $project && $key !== $project ) {
+				continue;
+			}
+			$config[$key] = [
+				'category' => $values['Category'],
+				'page' => $values['Page'],
+				'articles' => $values['Articles'],
+				'days' => $values['Days'],
+				'orange' => $values['Orange'],
+				'red' => $values['Red']
+			];
+		}
+		$this->subscriptions = $config;
+	} else {
+		throw new Exception( 'Could not retrieve config page.' );
+	}
+}
+
 $wikipedia = new wikipedia();
 
 // Log in to wikipedia
 $wikipedia->login( $enwiki['user'], $enwiki['pass'] );
 
-$link = mysqli_connect( $hotarticlesdb['host'], $hotarticlesdb['user'], $hotarticlesdb['pass'], $hotarticlesdb['dbname'] );
-
-if ( isset( $argv[1] ) && !is_nan( $argv[1] ) ) {
-	$argv[1] = mysqli_real_escape_string( $link, $argv[1] );
-	$query = "SELECT * FROM hotarticles WHERE id = $argv[1]";
+if ( isset( $argv[1] ) ) {
+	$subscriptions = getSubscriptions( $argv[1] );
 } else {
-	$query = "SELECT * FROM hotarticles";
+	$subscriptions = getSubscriptions();
 }
-$result = mysqli_query($link, $query) or die(mysqli_error());
 
 $link = mysqli_connect($enwikidb['host'], $enwikidb['user'], $enwikidb['pass'], $enwikidb['dbname']);
 
 // Fetch all the subscriptions and generate a chart for each
-while ( $row = mysqli_fetch_array( $result ) ) {
+foreach ( $subscriptions as $row ) {
 	$time_start = microtime(true);
+
 	// Allow up to 5 minutes for each chart to be generated. This resets max_execution_time.
 	set_time_limit( 300 );
-	if ( $row['method'] == 'category' ) {
-		$category = str_replace( ' ', '_', $row['source'] );
-		$count = $wikipedia->categorypagecount( 'Category:'.$category );
-		if ( $count < $maxArticles ) {
-			$editCounts = getEditCounts( $link, $category, $row['span_days'], $row['article_number'], $row['method'] );
-		} else {
-			echo "Category ".$row['source']." is too large. Skipping.\n";
-			continue;
-		}
-	} else if ($row['method'] == 'template') {
-		$template = str_replace( ' ', '_', $row['source'] );
-		$editCounts = getEditCounts( $link, $template, $row['span_days'], $row['article_number'], $row['method'] );
+
+	$category = str_replace( ' ', '_', $row['category'] );
+	$count = $wikipedia->categorypagecount( 'Category:'.$category );
+	if ( $count < $maxArticles ) {
+		$editCounts = getEditCounts( $link, $category, $row['days'], $row['articles'] );
 	} else {
-		echo "Invalid method for ".$row['source'].". Skipping.\n";
+		echo "Category ".$row['category']." is too large. Skipping.\n";
 		continue;
 	}
 
@@ -111,13 +140,13 @@ WIKITEXT;
 WIKITEXT;
 	$wordarray = array('zero','one','two','three','four','five','six','seven','eight','nine','ten');
 	$date = date('j F Y', time());
-	$output .= "\n<small>These are the articles that have been edited the most within the last ".$wordarray[$row['span_days']]." days. Last updated $date by [[User:HotArticlesBot|HotArticlesBot]].</small>\n";
+	$output .= "\n<small>These are the articles that have been edited the most within the last ".$wordarray[$row['days']]." days. Last updated $date by [[User:HotArticlesBot|HotArticlesBot]].</small>\n";
 
 	if ( $validUpdate ) {
-		$edit = $wikipedia->edit($row['target_page'],$output,'Updating for '.date('F j, Y'));
+		$edit = $wikipedia->edit($row['page'],$output,'Updating for '.date('F j, Y'));
 	}
 	$time_end = microtime(true);
 	$execution_time = round( $time_end - $time_start, 2 );
-	echo $row['source'] . " (" . $execution_time . " seconds)\n";
+	echo $row['category'] . " (" . $execution_time . " seconds)\n";
 }
 echo "$date: Bot run\n";
