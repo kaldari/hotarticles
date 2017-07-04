@@ -108,9 +108,9 @@ if ( isset( $argv[1] ) ) {
 $link = mysqli_connect($enwikidb['host'], $enwikidb['user'], $enwikidb['pass'], $enwikidb['dbname']);
 
 // Fetch all the subscriptions and generate a chart for each
-foreach ( $subscriptions as $key => $row ) {
+foreach ( $subscriptions as $subscriptionName => $row ) {
 	if ( !isSubscriptionSane( $row ) ) {
-		echo "Subscription for ".$key." is malformed. Skipping.\n";
+		echo "Subscription for ".$subscriptionName." is malformed. Skipping.\n";
 		continue;
 	}
 	$time_start = microtime(true);
@@ -167,6 +167,6 @@ WIKITEXT;
 	}
 	$time_end = microtime(true);
 	$execution_time = round( $time_end - $time_start, 2 );
-	echo $key . " (" . $execution_time . " seconds)\n";
+	echo $subscriptionName . " (" . $execution_time . " seconds)\n";
 }
 echo "$date: Bot run\n";
