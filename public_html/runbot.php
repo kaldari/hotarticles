@@ -167,6 +167,6 @@ WIKITEXT;
 	}
 	$time_end = microtime(true);
 	$execution_time = round( $time_end - $time_start, 2 );
-	echo $row['category'] . " (" . $execution_time . " seconds)\n";
+	echo $key . " (" . $execution_time . " seconds)\n";
 }
 echo "$date: Bot run\n";
