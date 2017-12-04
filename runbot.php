@@ -25,7 +25,7 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 			}
 			// Retrieve the pages with the most revisions since the threshold revision.
 			if ( $revId && $revTimestamp ) {
-				$source = mysqli_real_escape_string( $source );
+				$source = mysqli_real_escape_string( $link, $source );
 				if ( $method === 'template' ) {
 					$subquery = "select a.page_id,a.page_title from templatelinks join page as t on t.page_id=tl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where tl_title='".$source."' and a.page_latest>".$revId;
 				} else {
