@@ -1,0 +1,18 @@
+<?php
+// Maximum number of articles to analyze for a WikiProject. If the WikiProject's
+// category contains more than this number, it will be skipped.
+$maxArticles = 50000;
+
+// Login credentials for the wiki
+$enwiki = array(
+        'user' => 'MyBotName',
+        'pass' => 'password'
+);
+
+// Credentials for the Wikipedia replica database
+$enwikidb = array(
+        'dbname' =>  'enwiki_p',
+        'host' => 'enwiki.labsdb',
+        'user' => 'sXXXXX',
+        'pass' => 'password'
+);
