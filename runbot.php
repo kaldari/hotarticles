@@ -39,7 +39,7 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 						$pages[$title] = $row['ctall'];
 					}
 				} else {
-					echo "No pages retrieved.\n";
+					echo "No pages retrieved. " . mysqli_error( $link ) . "\n";
 				}
 			}
 		} else {
