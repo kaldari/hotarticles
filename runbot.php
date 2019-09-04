@@ -179,4 +179,5 @@ WIKITEXT;
 	$execution_time = round( $time_end - $time_start, 2 );
 	echo $subscriptionName . " (" . $execution_time . " seconds)\n";
 }
+$date = date('j F Y', time());
 echo "$date: Bot run\n";
