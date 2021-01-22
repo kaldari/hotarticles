@@ -45,6 +45,8 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 		} else {
 			echo "Could not retrieve ID and timestamp of first revision.\n";
 		}
+	} else {
+		echo "Days greater than maximum.\n";
 	}
 	return $pages;
 }
@@ -137,8 +139,6 @@ foreach ( $subscriptions as $subscriptionName => $row ) {
 		continue;
 	}
 
-	$output = "{|\n";
-	$validUpdate = false;
 	$output = "{|\n";
 	$validUpdate = false;
 	foreach ( $editCounts as $key => $value ) {
