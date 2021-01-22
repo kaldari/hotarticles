@@ -24,7 +24,7 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 				$revTimestamp = $row['rev_timestamp'];
 			}
 			// Retrieve the pages with the most revisions since the threshold revision.
-			if ( $revId && $revTimestamp ) {
+			if ( isset( $revId ) && $revId && isset( $revTimestamp ) && $revTimestamp ) {
 				$source = mysqli_real_escape_string( $link, $source );
 				if ( $method === 'template' ) {
 					$subquery = "select a.page_id,a.page_title from templatelinks join page as t on t.page_id=tl_from and t.page_namespace=1 join page as a on a.page_title=t.page_title and a.page_namespace=0 where tl_title='".$source."' and a.page_latest>".$revId;
@@ -41,6 +41,8 @@ function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'catego
 				} else {
 					echo "No pages retrieved. " . mysqli_error( $link ) . "\n";
 				}
+			} else {
+				echo "ID or timestamp of first revision invalid.\n";
 			}
 		} else {
 			echo "Could not retrieve ID and timestamp of first revision.\n";
