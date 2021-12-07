@@ -13,6 +13,9 @@ if  ( php_sapi_name() !== 'cli' ) {
 require_once dirname(__FILE__) . '/config.inc.php';
 require_once dirname(__FILE__) . '/botclasses.php';
 
+// Set $verbose to true to see how long each subscription takes to process.
+$verbose = false;
+
 function getEditCounts( $link, $source, $days = 3, $limit = 5, $method = 'category' ) {
 	$pages = array();
 	if ( $days <= 30 ) {
@@ -179,7 +182,9 @@ WIKITEXT;
 	}
 	$time_end = microtime(true);
 	$execution_time = round( $time_end - $time_start, 2 );
-	echo $subscriptionName . " (" . $execution_time . " seconds)\n";
+	if ($verbose) {
+		echo $subscriptionName . " (" . $execution_time . " seconds)\n";
+	}
 }
 $date = date('j F Y', time());
 echo "$date: Bot run\n";
